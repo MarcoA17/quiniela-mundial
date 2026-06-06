@@ -1,0 +1,106 @@
+<div style="max-width: 800px; margin: 0 auto; padding: 20px; font-family: system-ui, sans-serif;">
+  
+  <h1 style="text-align: center; color: #1e3a8a;">🏆 Mi Quiniela Mundialista</h1>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; text-align: center;">
+    <div style="background-color: #f3f4f6; padding: 15px; border-radius: 10px;">
+      <h4 style="margin: 0; color: #4b5563;">Participantes registrados</h4>
+      <h2 style="margin: 5px 0 0 0; color: #111827;">{{ srv.participantes().length }}</h2>
+    </div>
+    <div style="background-color: #ecfdf5; padding: 15px; border-radius: 10px;">
+      <h4 style="margin: 0; color: #065f46;">Bolsa Acumulada</h4>
+      <h2 style="margin: 5px 0 0 0; color: #047857;">${{ srv.bolsaTotal() }} MXN</h2>
+    </div>
+  </div>
+
+  <section style="margin-bottom: 40px;">
+    <h3 style="color: #1e3a8a; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">📊 Tabla de Posiciones</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+      <thead>
+        <tr style="background-color: #1e3a8a; color: white; text-align: left;">
+          <th style="padding: 12px 8px;">Posición</th>
+          <th style="padding: 12px 8px;">Nombre</th>
+          <th style="padding: 12px 8px; text-align: center;">Puntos</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of srv.tablaPosiciones(); track user.id; let idx = $index) {
+          <tr style="border-bottom: 1px solid #e5e7eb;" [style.background-color]="idx === 0 ? '#fef08a' : 'transparent'">
+            <td style="padding: 12px 8px; font-weight: bold;">#{{ idx + 1 }}</td>
+            <td style="padding: 12px 8px;">{{ user.nombre }}</td>
+            <td style="padding: 12px 8px; font-weight: bold; text-align: center; color: #1d4ed8;">
+              {{ user.puntos }} pts
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="3" style="padding: 20px; text-align: center; color: #9ca3af;">Nadie se ha registrado. ¡Sé el primero abajo!</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+
+  <section style="background-color: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <h3 style="color: #0f172a; margin-top: 0;">📝 Registra tus Pronósticos</h3>
+    
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #334155;">Tu Nombre:</label>
+      <input type="text" [(ngModel)]="nombreParticipante" placeholder="Ej. Juan Pérez" 
+             style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 15px; box-sizing: border-box;">
+    </div>
+
+    <h4 style="color: #475569; margin-bottom: 10px;">¿Quién ganará?</h4>
+    
+    @for (partido of srv.partidos(); track partido.id) {
+      <div style="background-color: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <span style="font-weight: 500; color: #1e293b;">
+          <strong>{{ partido.equipo_a }}</strong> vs <strong>{{ partido.equipo_b }}</strong>
+        </span>
+        
+        <div style="display: flex; gap: 5px;">
+          <button type="button" (click)="seleccionarPronostico(partido.id, 'A')"
+                  [style.background-color]="apuestasForm()[partido.id] === 'A' ? '#3b82f6' : '#f1f5f9'"
+                  [style.color]="apuestasForm()[partido.id] === 'A' ? 'white' : '#1e293b'"
+                  style="border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+            Gana A
+          </button>
+          <button type="button" (click)="seleccionarPronostico(partido.id, 'E')"
+                  [style.background-color]="apuestasForm()[partido.id] === 'E' ? '#94a3b8' : '#f1f5f9'"
+                  [style.color]="apuestasForm()[partido.id] === 'E' ? 'white' : '#1e293b'"
+                  style="border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+            Empate
+          </button>
+          <button type="button" (click)="seleccionarPronostico(partido.id, 'B')"
+                  [style.background-color]="apuestasForm()[partido.id] === 'B' ? '#3b82f6' : '#f1f5f9'"
+                  [style.color]="apuestasForm()[partido.id] === 'B' ? 'white' : '#1e293b'"
+                  style="border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+            Gana B
+          </button>
+        </div>
+      </div>
+    }
+
+    <button (click)="enviarQuiniela()" 
+            style="width: 100%; padding: 14px; background-color: #10b981; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px;">
+      💾 Guardar Mi Quiniela ($100)
+    </button>
+  </section>
+
+  <section style="background-color: #fff7ed; padding: 20px; border-radius: 12px; border: 1px solid #ffedd5;">
+    <h3 style="color: #c2410c; margin-top: 0;">⚙️ Panel Simulador de Resultados (Tú como Admin)</h3>
+    <p style="font-size: 14px; color: #7c2d12;">Usa estos botones para definir qué pasó en la vida real. Mira cómo los puntos y las posiciones de arriba cambian de inmediato sin recargar la página.</p>
+
+    @for (partido of srv.partidos(); track partido.id) {
+      <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #fed7aa; padding-bottom: 10px;">
+        <span style="font-size: 14px;">{{ partido.equipo_a }} vs {{ partido.equipo_b }}:</span>
+        <div style="display: flex; gap: 5px;">
+          <button (click)="simularResultadoReal(partido.id, 'A')" style="padding: 4px 8px; font-size: 12px; cursor: pointer;">Ganó A</button>
+          <button (click)="simularResultadoReal(partido.id, 'E')" style="padding: 4px 8px; font-size: 12px; cursor: pointer;">Empate</button>
+          <button (click)="simularResultadoReal(partido.id, 'B')" style="padding: 4px 8px; font-size: 12px; cursor: pointer;">Ganó B</button>
+        </div>
+      </div>
+    }
+  </section>
+
+</div>

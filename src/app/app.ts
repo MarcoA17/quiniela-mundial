@@ -1,12 +1,12 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { QuinielaComponent } from './components/quiniela/quiniela'; // ← ¡Esta línea es la que nos faltaba!
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  standalone: true,
+  imports: [QuinielaComponent], // Importamos tu componente aquí
+  template: '<app-quiniela></app-quiniela>' // Renderizamos directamente tu quiniela
 })
-export class App {
-  protected readonly title = signal('quiniela-mundial');
+export class AppComponent {
+  title = 'quiniela-mundial';
 }
