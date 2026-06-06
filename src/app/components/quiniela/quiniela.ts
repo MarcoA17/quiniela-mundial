@@ -20,6 +20,10 @@ export class QuinielaComponent implements OnInit {
   public nombreParticipante = '';
   public apuestasForm = signal<{ [partidoId: number]: 'A' | 'B' | 'E' }>({});
   public esAdministrador = signal<boolean>(false);
+  // 1. Lista fija de tus 12 grupos mundiales
+  public listaGrupos = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+  // 2. Signal para controlar qué grupo se muestra en pantalla (por defecto arranca en el A)
+  public grupoSeleccionado = signal<string>('A');
 
   ngOnInit() {
     // 1. Validar si es administrador mediante la URL
@@ -66,4 +70,10 @@ export class QuinielaComponent implements OnInit {
   simularResultadoReal(partidoId: number, resultado: 'A' | 'B' | 'E') {
     this.srv.actualizarResultadoOficial(partidoId, resultado);
   }
+
+  // Cambiar de pestaña al dar clic
+  public cambiarGrupo(letra: string) {
+    this.grupoSeleccionado.set(letra);
+  }
+
 }
