@@ -129,52 +129,59 @@
     </section>
 
     @if (esAdministrador()) {
-    <section style="background-color: #fff7ed; padding: 20px; border-radius: 12px; border: 1px solid #ffedd5;">
-        <h3 style="color: #c2410c; margin-top: 0;">⚙️ Panel Simulador de Resultados (Tú como Admin)</h3>
-        <p style="font-size: 14px; color: #7c2d12; margin-bottom: 20px;">Usa estos botones para definir qué pasó en la
-            vida real. Mira cómo los puntos y las posiciones de arriba cambian de inmediato sin recargar la página.</p>
+    <section
+        style="background-color: #fff7ed; padding: 25px; border-radius: 12px; border: 1px solid #ffedd5; margin-bottom: 50px;">
+        <h3 style="color: #c2410c; margin-top: 0;">⚙️ Panel Simulador de Resultados (Admin)</h3>
+        <p style="font-size: 14px; color: #7c2d12; margin-bottom: 20px;">
+            Selecciona el grupo del partido que acaba de terminar para definir el marcador oficial:
+        </p>
+
+        <div
+            style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 20px; scrollbar-width: thin;">
+            @for (g of listaGrupos; track g) {
+            <button type="button" (click)="cambiarGrupo(g)"
+                [style.background-color]="grupoSeleccionado() === g ? '#c2410c' : '#ffedd5'"
+                [style.color]="grupoSeleccionado() === g ? 'white' : '#7c2d12'"
+                style="border: 1px solid #fed7aa; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; min-width: 45px;">
+                {{ g }}
+            </button>
+            }
+        </div>
 
         <div style="display: flex; flex-direction: column; gap: 12px;">
-            @for (partido of srv.partidos(); track partido.id; let idx = $index) {
+            @for (partido of srv.partidos(); track partido.id) {
 
-            @if (idx === 0) {
+            @if (partido.grupo === grupoSeleccionado()) {
             <div
-                style="color: #c2410c; font-weight: bold; font-size: 13px; border-bottom: 1px solid #fed7aa; padding-bottom: 4px;">
-                SIMULAR JORNADA 1</div>
-            }
-            @if (idx === 24) {
-            <div
-                style="color: #c2410c; font-weight: bold; font-size: 13px; border-bottom: 1px solid #fed7aa; padding-bottom: 4px; margin-top: 15px;">
-                SIMULAR JORNADA 2</div>
-            }
-            @if (idx === 48) {
-            <div
-                style="color: #c2410c; font-weight: bold; font-size: 13px; border-bottom: 1px solid #fed7aa; padding-bottom: 4px; margin-top: 15px;">
-                SIMULAR JORNADA 3</div>
-            }
-
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; background-color: white; padding: 10px; border-radius: 6px; border: 1px solid #fed7aa;">
-                <span style="font-size: 13px; color: #475569;">
-                    <strong style="color: #111827;">#{{ partido.id }}</strong> - {{ partido.equipo_a }} vs {{
-                    partido.equipo_b }}
+                style="display: flex; justify-content: space-between; align-items: center; background-color: white; padding: 12px; border-radius: 8px; border: 1px solid #fed7aa; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <span style="font-size: 13px; color: #475569;">
+                        <strong style="color: #111827;">#{{ partido.id }}</strong> - {{ partido.equipo_a }} vs {{
+                        partido.equipo_b }}
+                    </span>
                     @if (partido.resultado_real) {
                     <span
-                        style="margin-left: 8px; background-color: #fef08a; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; color: #854d0e;">Listo:
-                        {{ partido.resultado_real }}</span>
+                        style="background-color: #fef08a; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; color: #854d0e; width: fit-content;">
+                        Resultado Actual: {{ partido.resultado_real === 'A' ? 'Gana A' : (partido.resultado_real === 'E'
+                        ? 'Empate' : 'Gana B') }}
+                    </span>
+                    } @else {
+                    <span style="color: #94a3b8; font-size: 11px; font-style: italic;">Pendiente de jugar...</span>
                     }
-                </span>
+                </div>
+
                 <div style="display: flex; gap: 5px;">
                     <button (click)="simularResultadoReal(partido.id, 'A')"
-                        style="padding: 5px 10px; font-size: 12px; cursor: pointer; border-radius: 4px; border: 1px solid #cbd5e1; font-weight: bold; background-color: #f8fafc;">Gana
+                        style="padding: 6px 10px; font-size: 12px; cursor: pointer; border-radius: 5px; border: 1px solid #cbd5e1; font-weight: bold; background-color: #f8fafc;">Gana
                         A</button>
                     <button (click)="simularResultadoReal(partido.id, 'E')"
-                        style="padding: 5px 10px; font-size: 12px; cursor: pointer; border-radius: 4px; border: 1px solid #cbd5e1; font-weight: bold; background-color: #f8fafc;">Empate</button>
+                        style="padding: 6px 10px; font-size: 12px; cursor: pointer; border-radius: 5px; border: 1px solid #cbd5e1; font-weight: bold; background-color: #f8fafc;">Empate</button>
                     <button (click)="simularResultadoReal(partido.id, 'B')"
-                        style="padding: 5px 10px; font-size: 12px; cursor: pointer; border-radius: 4px; border: 1px solid #cbd5e1; font-weight: bold; background-color: #f8fafc;">Gana
+                        style="padding: 6px 10px; font-size: 12px; cursor: pointer; border-radius: 5px; border: 1px solid #cbd5e1; font-weight: bold; background-color: #f8fafc;">Gana
                         B</button>
                 </div>
             </div>
+            }
             }
         </div>
     </section>
