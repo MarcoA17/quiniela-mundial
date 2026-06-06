@@ -87,6 +87,7 @@
     </button>
   </section>
 
+  @if (esAdministrador()) {
   <section style="background-color: #fff7ed; padding: 20px; border-radius: 12px; border: 1px solid #ffedd5;">
     <h3 style="color: #c2410c; margin-top: 0;">⚙️ Panel Simulador de Resultados (Tú como Admin)</h3>
     <p style="font-size: 14px; color: #7c2d12;">Usa estos botones para definir qué pasó en la vida real. Mira cómo los puntos y las posiciones de arriba cambian de inmediato sin recargar la página.</p>
@@ -102,5 +103,5 @@
       </div>
     }
   </section>
-
+}
 </div>

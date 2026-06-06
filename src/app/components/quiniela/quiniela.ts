@@ -1,6 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+// src/app/components/quiniela/quiniela.ts
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { QuinielaService } from '../../services/quiniela';
 import { Pronostico } from '../../quiniela.models';
 
@@ -11,53 +13,49 @@ import { Pronostico } from '../../quiniela.models';
   templateUrl: './quiniela.html',
   styleUrls: ['./quiniela.css']
 })
-export class QuinielaComponent {
-  // Inyectamos nuestro servicio de Signals
+export class QuinielaComponent implements OnInit {
   public srv = inject(QuinielaService);
+  private route = inject(ActivatedRoute);
 
-  // Estados locales del formulario utilizando signals simples
   public nombreParticipante = '';
   public apuestasForm = signal<{ [partidoId: number]: 'A' | 'B' | 'E' }>({});
+  public esAdministrador = signal<boolean>(false);
 
-  // Guarda la opción elegida por el usuario en el formulario
-  seleccionarPronostico(partidoId: number, opcion: 'A' | 'B' | 'E') {
-    this.apuestasForm.update(prev => ({
-      ...prev,
-      [partidoId]: opcion
-    }));
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['admin'] === 'true') {
+        this.esAdministrador.set(true);
+      }
+    });
   }
 
-  // Evento para enviar la quiniela al hacer clic en guardar
-  enviarQuiniela() {
+  seleccionarPronostico(partidoId: number, opcion: 'A' | 'B' | 'E') {
+    this.apuestasForm.update(prev => ({ ...prev, [partidoId]: opcion }));
+  }
+
+  async enviarQuiniela() {
     if (!this.nombreParticipante.trim()) {
       alert('Por favor ingresa tu nombre.');
       return;
     }
-
     const partidosActuales = this.srv.partidos();
-    
-    // Validamos que se hayan contestado todos los partidos
     if (Object.keys(this.apuestasForm()).length < partidosActuales.length) {
       alert('Debes completar los pronósticos de todos los partidos.');
       return;
     }
-
-    // Mapeamos los datos al formato correcto
     const listaApuestas: Pronostico[] = partidosActuales.map(p => ({
       partido_id: p.id,
       prediccion: this.apuestasForm()[p.id]
     }));
 
-    // Guardamos en el servicio de Signals
-    this.srv.guardarNuevaQuiniela(this.nombreParticipante, listaApuestas);
-    
-    // Limpiamos el formulario para el siguiente amigo
-    alert('¡Tu quiniela se ha registrado con éxito localmente!');
-    this.nombreParticipante = '';
-    this.apuestasForm.set({});
+    const exito = await this.srv.guardarNuevaQuiniela(this.nombreParticipante, listaApuestas);
+    if (exito) {
+      alert('¡Tu quiniela se ha registrado con éxito en la nube!');
+      this.nombreParticipante = '';
+      this.apuestasForm.set({});
+    }
   }
 
-  // Función simuladora para que tú actúes como administrador y metas resultados reales
   simularResultadoReal(partidoId: number, resultado: 'A' | 'B' | 'E') {
     this.srv.actualizarResultadoOficial(partidoId, resultado);
   }
