@@ -22,11 +22,18 @@ export class QuinielaComponent implements OnInit {
   public esAdministrador = signal<boolean>(false);
 
   ngOnInit() {
+    // 1. Validar si es administrador mediante la URL
     this.route.queryParams.subscribe(params => {
       if (params['admin'] === 'true') {
         this.esAdministrador.set(true);
       }
     });
+
+    // 2. AUTO-REFRESCO: Consultar datos nuevos de Supabase cada 30 segundos de manera automática
+    setInterval(() => {
+      console.log('🔄 Sincronizando tabla automáticamente con la nube...');
+      this.srv.cargarDatosDeLaNube();
+    }, 30000); // 30000 milisegundos = 30 segundos
   }
 
   seleccionarPronostico(partidoId: number, opcion: 'A' | 'B' | 'E') {
