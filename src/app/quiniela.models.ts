@@ -19,4 +19,5 @@ export interface Participante {
   pagado: boolean;
   pronosticos: Pronostico[];
   puntos?: number; // Lo calcularemos dinámicamente con un computed
+  ya_edito_una_vez?: boolean;
 }

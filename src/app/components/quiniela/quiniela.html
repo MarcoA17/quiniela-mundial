@@ -29,7 +29,7 @@
             <p style="margin: 5px 0 0 0; color: #e0f2fe; font-size: 13px; line-height: 1.5;">
                 1. Llena tus marcadores exactos (Atinarle da <strong>3 pts</strong>, tendencia da <strong>1
                     pt</strong>).<br>
-                2. Al guardar, tu quiniela se enviará al sistema en estado pendiente.<br>
+                2. Al guardar, tu quiniela se enviará al system en estado pendiente.<br>
                 3. Aparecerás en la tabla en cuanto el Administrador valide tu participación.
             </p>
         </div>
@@ -124,25 +124,18 @@
                         }
                     </div>
 
-                    <div
-                        style="display: flex; gap: 15px; align-items: center; background-color: rgba(255,255,255,0.7); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
-                        <div style="text-align: center;">
-                            <span
-                                style="font-size: 10px; display: block; text-transform: uppercase; opacity: 0.8; font-weight: bold;">Tu
-                                Pronóstico</span>
-                            <span style="font-size: 16px; font-weight: 800;">{{ miApuesta?.a }} - {{ miApuesta?.b
-                                }}</span>
-                        </div>
-                        <div style="width: 1px; height: 25px; background-color: rgba(0,0,0,0.1);"></div>
-                        <div style="text-align: center;">
-                            <span
-                                style="font-size: 10px; display: block; text-transform: uppercase; opacity: 0.8; font-weight: bold;">FIFA
-                                Real</span>
-                            <span style="font-size: 16px; font-weight: 800;">
-                                {{ partido.goles_a !== null ? partido.goles_a : '-' }} - {{ partido.goles_b !== null ?
-                                partido.goles_b : '-' }}
-                            </span>
-                        </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="number" 
+                            [value]="miApuesta ? miApuesta.a : 0"
+                            disabled
+                            style="width: 50px; padding: 8px; text-align: center; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; background-color: #f1f5f9; color: #0f172a; opacity: 0.85;">
+
+                        <span style="color: #cbd5e1; font-weight: bold;">-</span>
+
+                        <input type="number" 
+                            [value]="miApuesta ? miApuesta.b : 0"
+                            disabled
+                            style="width: 50px; padding: 8px; text-align: center; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; background-color: #f1f5f9; color: #0f172a; opacity: 0.85;">
                     </div>
                 </div>
                 }
@@ -154,11 +147,22 @@
         <section
             style="background-color: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); margin-bottom: 40px;">
             <h3 style="color: #0f172a; margin-top: 0; font-weight: bold;">📝 Registra tus Pronósticos</h3>
-            <div style="margin-bottom: 25px;">
-                <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #334155;">Tu Nombre
-                    Completo:</label>
-                <input type="text" [(ngModel)]="nombreParticipante" placeholder="Ej. Marco Sánchez"
-                    style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 15px; box-sizing: border-box; background-color: white; color: #0f172a;">
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #1e293b;">
+                    Tu Nombre Completo:
+                </label>
+
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" [(ngModel)]="nombreParticipante" placeholder="Ej. Marco Sánchez"
+                        style="flex: 1; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;">
+
+                    @if (!modoEdicion()) {
+                    <button type="button" (click)="cargarQuinielaParaEditar(nombreParticipante)"
+                        style="padding: 12px 16px; background-color: #4f46e5; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                        ✏️ Editar mi Quiniela
+                    </button>
+                    }
+                </div>
             </div>
 
             <div
@@ -187,9 +191,13 @@
                     </span>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <input type="number" min="0" placeholder="0" [(ngModel)]="apuestasForm()[partido.id + '_a']"
+                            [disabled]="modoEdicion() && partido.goles_a !== null"
+                            [style.opacity]="modoEdicion() && partido.goles_a !== null ? '0.5' : '1'"
                             style="width: 50px; padding: 8px; text-align: center; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; background-color: white; color: #0f172a;">
                         <span style="color: #cbd5e1; font-weight: bold;">-</span>
                         <input type="number" min="0" placeholder="0" [(ngModel)]="apuestasForm()[partido.id + '_b']"
+                            [disabled]="modoEdicion() && partido.goles_b !== null"
+                            [style.opacity]="modoEdicion() && partido.goles_b !== null ? '0.5' : '1'"
                             style="width: 50px; padding: 8px; text-align: center; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; background-color: white; color: #0f172a;">
                     </div>
                 </div>
@@ -197,10 +205,19 @@
                 }
             </div>
 
-            <button (click)="enviarQuiniela()"
-                style="width: 100%; padding: 16px; background-color: #10b981; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 25px; box-shadow: 0 4px 12px rgba(16,185,129,0.3); transition: 0.2s;">
-                💾 Guardar y Enviar Petición ($100)
-            </button>
+            <div style="margin-top: 20px;">
+                @if (!modoEdicion()) {
+                <button (click)="enviarQuiniela()" 
+                    style="width: 100%; padding: 16px; background-color: #10b981; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">
+                    💾 Guardar y Enviar Petición ($100)
+                </button>
+                } @else {
+                <button (click)="guardarEdicion()" 
+                    style="width: 100%; padding: 16px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 12px rgba(59,130,246,0.3);">
+                    🔄 Actualizar mis Pronósticos (Única Oportunidad)
+                </button>
+                }
+            </div>
         </section>
 
         @if (esAdministrador()) {

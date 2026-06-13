@@ -15,6 +15,7 @@ export interface Participante {
   id: number;
   nombre: string;
   aprobado: boolean;
+  ya_edito_una_vez: boolean; // 👈 Cambiado a tipo boolean limpio
   pronosticos: Pronostico[];
 }
 
@@ -38,9 +39,8 @@ export class QuinielaService {
 
     const tabla = aprobados.map(usuario => {
       let puntos = 0;
-      // Validamos que existan pronósticos antes de recorrerlos
       const apuestas = usuario.pronosticos || [];
-      
+
       apuestas.forEach(apuesta => {
         const partidoReal = listaPartidos.find(p => p.id === apuesta.partido_id);
         if (partidoReal && partidoReal.goles_a !== null && partidoReal.goles_b !== null) {
@@ -69,24 +69,24 @@ export class QuinielaService {
     const { data: resPartidos } = await this.supabase.from('partidos').select('*').order('id');
     if (resPartidos) this.partidos.set(resPartidos as Partido[]);
 
-    // 2. Descargar participantes y sus pronósticos relacionados
+    // 2. Descargar participantes incluyendo la nueva columna 'ya_edito_una_vez'
     const { data: resParticipantes } = await this.supabase
       .from('participantes')
-      .select('id, nombre, aprobado, pronosticos(partido_id, goles_a_pronostico, goles_b_pronostico)');
-    
+      .select('id, nombre, aprobado, ya_edito_una_vez, pronosticos(partido_id, goles_a_pronostico, goles_b_pronostico)');
+
     if (resParticipantes) {
-      // 🌟 MAPEO DEFENSIVO: Asegura que la propiedad 'pronosticos' exista de forma uniforme
+      // 🌟 MAPEO DEFENSIVO CORREGIDO: Ahora sí incluye 'ya_edito_una_vez'
       const formateados: Participante[] = (resParticipantes as any[]).map(p => {
-        // Supabase puede devolver la relación como 'pronosticos' o nombres variantes según claves foráneas
         const listaPronosticos = p.pronosticos || p.pronostico || [];
         return {
           id: p.id,
           nombre: p.nombre,
           aprobado: p.aprobado,
+          ya_edito_una_vez: !!p.ya_edito_una_vez, // 👈 Evita valores null transformándolo a boolean
           pronosticos: Array.isArray(listaPronosticos) ? listaPronosticos : [listaPronosticos]
         };
       });
-      
+
       this.participantes.set(formateados);
     }
   }
@@ -94,7 +94,7 @@ export class QuinielaService {
   async registrarNuevaQuiniela(nombre: string, pronosticos: Pronostico[]) {
     const { data: participanteCreado, error: errPart } = await this.supabase
       .from('participantes')
-      .insert([{ nombre, aprobado: false }]) 
+      .insert([{ nombre, aprobado: false }])
       .select().single();
 
     if (errPart || !participanteCreado) throw new Error("Error al registrar");
@@ -118,5 +118,35 @@ export class QuinielaService {
   async actualizarResultadoOficial(partidoId: number, golesA: number, golesB: number) {
     await this.supabase.from('partidos').update({ goles_a: golesA, goles_b: golesB }).eq('id', partidoId);
     await this.cargarDatosDeLaNube();
+  }
+
+  async actualizarQuinielaExistente(idParticipante: number, nuevosPronosticos: any[]) {
+    try {
+      const { error: errorParticipante } = await this.supabase
+        .from('participantes')
+        .update({ ya_edito_una_vez: true })
+        .eq('id', idParticipante);
+
+      if (errorParticipante) throw errorParticipante;
+
+      for (const pronostico of nuevosPronosticos) {
+        const { error: errorPronostico } = await this.supabase
+          .from('pronosticos')
+          .update({
+            goles_a_pronostico: pronostico.goles_a_pronostico,
+            goles_b_pronostico: pronostico.goles_b_pronostico
+          })
+          .eq('participante_id', idParticipante)
+          .eq('partido_id', pronostico.partido_id);
+
+        if (errorPronostico) throw errorPronostico;
+      }
+
+      await this.cargarDatosDeLaNube();
+
+    } catch (error) {
+      console.error('Error crítico al editar la quiniela:', error);
+      throw error;
+    }
   }
 }
