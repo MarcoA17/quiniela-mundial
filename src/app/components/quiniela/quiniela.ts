@@ -18,7 +18,10 @@ export class QuinielaComponent implements OnInit {
   public grupoSeleccionado = signal<string>('A');
   public esAdministrador = signal<boolean>(false);
 
-  // 🔍 Estado para la consulta de pronósticos individuales
+  // 🔄 NUEVO: Control de pantallas mediante menú de navegación
+  public pantallaActual = signal<string>('inicio');
+
+  // Estado para la consulta de pronósticos individuales
   public usuarioConsultado = signal<Participante | null>(null);
   public grupoConsulta = signal<string>('A');
 
@@ -39,35 +42,40 @@ export class QuinielaComponent implements OnInit {
     }, 10800000);
   }
 
+  // Método para cambiar de sección de forma fluida
+  public navegarA(pantalla: string) {
+    this.pantallaActual.set(pantalla);
+    // Truco: Si navega a registrar, limpiamos estados de edición viejos para evitar bugs
+    if (pantalla === 'registrar' && !this.modoEdicion()) {
+      this.nombreParticipante = '';
+      this.apuestasForm.set({});
+    }
+  }
+
   public cambiarGrupo(letra: string) {
     this.grupoSeleccionado.set(letra);
   }
 
-  // Cambiar pestaña en el área de consulta
   public cambiarGrupoConsulta(letra: string) {
     this.grupoConsulta.set(letra);
   }
 
-  // Actualiza la selección del buscador usando la referencia directa del servicio
   public seleccionarUsuarioConsulta(event: Event) {
     const id = (event.target as HTMLSelectElement).value;
     if (!id) {
       this.usuarioConsultado.set(null);
       return;
     }
-
-    // Buscamos dinámicamente en el listado del servicio
     const user = this.srv.participantes().find(p => p.id === Number(id));
     this.usuarioConsultado.set(user || null);
   }
 
-  /// 🎨 OPTIMIZADO: Calcula el color exacto basándose en el buscador robusto
   public obtenerEstiloAcierto(partidoId: number): { bg: string, texto: string, label: string } {
     const user = this.usuarioConsultado();
     const partido = this.srv.partidos().find(p => p.id === partidoId);
 
     if (!user || !partido || partido.goles_a === null || partido.goles_b === null) {
-      return { bg: '#ffffff', texto: '#1e293b', label: '' }; // Sin jugar aún
+      return { bg: '#ffffff', texto: '#1e293b', label: '' };
     }
 
     const miApuesta = this.obtenerGolesApostados(partidoId);
@@ -78,12 +86,10 @@ export class QuinielaComponent implements OnInit {
     const rA = partido.goles_a;
     const rB = partido.goles_b;
 
-    // Marcador Exacto
     if (pA === rA && pB === rB) {
       return { bg: '#dcfce7', texto: '#14532d', label: '🎯 ¡Marcador Exacto! (+3 pts)' };
     }
 
-    // Tendencia (Ganador/Empate)
     const tP = pA > pB ? 'A' : (pA < pB ? 'B' : 'E');
     const tR = rA > rB ? 'A' : (rA < rB ? 'B' : 'E');
 
@@ -91,16 +97,13 @@ export class QuinielaComponent implements OnInit {
       return { bg: '#fef9c3', texto: '#713f12', label: '⚽ Tendencia Acertada (+1 pt)' };
     }
 
-    // Fallado
     return { bg: '#f1f5f9', texto: '#475569', label: '❌ Fallado (0 pts)' };
   }
 
-  // Buscador robusto que lee la propiedad ya unificada en el servicio
   public obtenerGolesApostados(partidoId: number): { a: number, b: number } | null {
     const selectorId = this.usuarioConsultado()?.id;
     if (!selectorId) return null;
 
-    // Buscamos siempre la versión fresca del usuario directo desde el servicio
     const usuarioFresco = this.srv.participantes().find(p => p.id === selectorId);
     if (!usuarioFresco || !usuarioFresco.pronosticos) return null;
 
@@ -146,9 +149,10 @@ export class QuinielaComponent implements OnInit {
 
     try {
       await this.srv.registrarNuevaQuiniela(this.nombreParticipante, pronosticosAEnviar);
-      alert("¡Tus pronósticos han sido guardados con éxito! 🏆\n\nTu petición ha sido enviada al administrador. En cuanto sea aprobada tu participación, aparecerás automáticamente en la lista de posiciones.");
+      alert("¡Tus pronósticos han sido guardados con éxito! 🏆\n\nTu petición ha sido enviada al administrador.");
       this.nombreParticipante = '';
       this.apuestasForm.set({});
+      this.navegarA('inicio'); // Te regresa al inicio tras guardar
     } catch (err) {
       alert("Ocurrió un error al guardar.");
     }
@@ -166,63 +170,59 @@ export class QuinielaComponent implements OnInit {
 
   public autoRellenarCeros() {
     const formularioActual = { ...this.apuestasForm() };
-
     this.srv.partidos().forEach(partido => {
       formularioActual[`${partido.id}_a`] = 0;
       formularioActual[`${partido.id}_b`] = 0;
     });
-
     this.apuestasForm.set(formularioActual);
-    console.log("¡Ceros inyectados en el formulario reactivo!");
+    console.log("¡Ceros inyectados!");
   }
 
-  // 🛠️ FUNCIÓN AJUSTADA CON EL BUSCADOR ROBUSTO E INTELIGENTE
   async cargarQuinielaParaEditar(nombre: string) {
     if (!nombre || nombre.trim() === '') {
       alert('Por favor, escribe tu nombre completo primero.');
       return;
     }
 
-    // Limpiamos la cadena de entrada para evitar fallos por mayúsculas o espacios extra
     const nombreBuscado = nombre.trim().toLowerCase();
-
-    // Buscador tolerante que recorre los participantes actuales del servicio
-    const usuario = this.srv.participantes().find(p =>
-      p.nombre.trim().toLowerCase() === nombreBuscado
-    );
+    const usuario = this.srv.participantes().find(p => p.nombre.trim().toLowerCase() === nombreBuscado);
 
     if (!usuario) {
       alert("No se encontró ningún participante con ese nombre.");
       return;
     }
 
-    if (usuario.ya_edito_una_vez) {
+    if (usuario.ya_edito_una_vez && !this.esAdministrador()) {
       alert("Lo siento, ya utilizaste tu única oportunidad de edición.");
       return;
     }
 
-    // Activamos el modo edición asignando los datos maestros
     this.idParticipanteAEditar.set(usuario.id);
-    this.nombreParticipante = usuario.nombre; // Setea el nombre exacto de la DB
+    this.nombreParticipante = usuario.nombre;
 
     const nuevoFormulario: { [key: string]: number | null } = {};
+    
+    this.srv.partidos().forEach(partido => {
+      nuevoFormulario[`${partido.id}_a`] = 0;
+      nuevoFormulario[`${partido.id}_b`] = 0;
+    });
 
-    // Mapeamos los pronósticos previos que vienen de la base de datos hacia el formulario
     if (usuario.pronosticos) {
       usuario.pronosticos.forEach((p: any) => {
-        // Soporte dinámico por si cambian las propiedades de snake_case a camelCase en la interfaz
         const pId = p.partido_id !== undefined ? p.partido_id : p.partidoId;
         const golesA = p.goles_a_pronostico !== undefined ? p.goles_a_pronostico : p.golesAPronostico;
         const golesB = p.goles_b_pronostico !== undefined ? p.goles_b_pronostico : p.golesBPronostico;
 
-        nuevoFormulario[`${pId}_a`] = golesA !== null && golesA !== undefined ? Number(golesA) : 0;
-        nuevoFormulario[`${pId}_b`] = golesB !== null && golesB !== undefined ? Number(golesB) : 0;
+        if (pId) {
+          nuevoFormulario[`${pId}_a`] = golesA !== null && golesA !== undefined ? Number(golesA) : 0;
+          nuevoFormulario[`${pId}_b`] = golesB !== null && golesB !== undefined ? Number(golesB) : 0;
+        }
       });
     }
 
     this.apuestasForm.set(nuevoFormulario);
     this.modoEdicion.set(true);
-    alert("¡Modo edición activado! Modifica tus pronósticos libres en el panel inferior.");
+    alert("¡Modo edición activado!");
   }
 
   async guardarEdicion() {
@@ -237,14 +237,12 @@ export class QuinielaComponent implements OnInit {
       const golesA = formulario[`${partido.id}_a`];
       const golesB = formulario[`${partido.id}_b`];
 
-      // Si el partido YA TIENE resultado oficial bloqueado, preservamos el valor original guardado
-      if (partido.goles_a !== null && partido.goles_b !== null) {
-        // Forzamos la lectura como 'any' para evitar que TypeScript chille por las variantes de nombres de propiedades
+      if (partido.goles_a !== null && partido.goles_b !== null && !this.esAdministrador()) {
         const original = this.srv.participantes().find(p => p.id === idUser)
-          ?.pronosticos.find((pr: any) => {
-            const prId = pr.partido_id !== undefined ? pr.partido_id : pr.partidoId;
-            return Number(prId) === partido.id;
-          }) as any;
+                          ?.pronosticos.find((pr: any) => {
+                            const prId = pr.partido_id !== undefined ? pr.partido_id : pr.partidoId;
+                            return Number(prId) === partido.id;
+                          }) as any;
 
         const gAOrig = original?.goles_a_pronostico !== undefined ? original.goles_a_pronostico : original?.golesAPronostico;
         const gBOrig = original?.goles_b_pronostico !== undefined ? original.goles_b_pronostico : original?.golesBPronostico;
@@ -255,7 +253,6 @@ export class QuinielaComponent implements OnInit {
           goles_b_pronostico: gBOrig !== null && gBOrig !== undefined ? Number(gBOrig) : 0
         });
       } else {
-        // Si el partido está libre para jugar, guardamos lo que el usuario alteró en el input
         pronosticosActualizados.push({
           partido_id: partido.id,
           goles_a_pronostico: Number(golesA ?? 0),
@@ -266,13 +263,16 @@ export class QuinielaComponent implements OnInit {
 
     try {
       await this.srv.actualizarQuinielaExistente(idUser, pronosticosActualizados);
-      alert("¡Quiniela actualizada con éxito! Has agotado tu única edición.");
-
-      // Reseteamos el estado del formulario de forma limpia
+      if (this.esAdministrador()) {
+        alert("¡Quiniela actualizada por el Administrador!");
+      } else {
+        alert("¡Quiniela actualizada con éxito!");
+      }
       this.modoEdicion.set(false);
       this.idParticipanteAEditar.set(null);
       this.nombreParticipante = '';
       this.apuestasForm.set({});
+      this.navegarA('inicio');
     } catch (err) {
       alert("Error al actualizar la quiniela.");
     }
