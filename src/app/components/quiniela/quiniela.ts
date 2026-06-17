@@ -201,7 +201,7 @@ export class QuinielaComponent implements OnInit {
     this.nombreParticipante = usuario.nombre;
 
     const nuevoFormulario: { [key: string]: number | null } = {};
-    
+
     this.srv.partidos().forEach(partido => {
       nuevoFormulario[`${partido.id}_a`] = 0;
       nuevoFormulario[`${partido.id}_b`] = 0;
@@ -239,10 +239,10 @@ export class QuinielaComponent implements OnInit {
 
       if (partido.goles_a !== null && partido.goles_b !== null && !this.esAdministrador()) {
         const original = this.srv.participantes().find(p => p.id === idUser)
-                          ?.pronosticos.find((pr: any) => {
-                            const prId = pr.partido_id !== undefined ? pr.partido_id : pr.partidoId;
-                            return Number(prId) === partido.id;
-                          }) as any;
+          ?.pronosticos.find((pr: any) => {
+            const prId = pr.partido_id !== undefined ? pr.partido_id : pr.partidoId;
+            return Number(prId) === partido.id;
+          }) as any;
 
         const gAOrig = original?.goles_a_pronostico !== undefined ? original.goles_a_pronostico : original?.golesAPronostico;
         const gBOrig = original?.goles_b_pronostico !== undefined ? original.goles_b_pronostico : original?.golesBPronostico;
@@ -276,5 +276,55 @@ export class QuinielaComponent implements OnInit {
     } catch (err) {
       alert("Error al actualizar la quiniela.");
     }
+  }
+
+  public descargarComprobante() {
+    const user = this.usuarioConsultado();
+    if (!user) {
+      alert("Por favor, selecciona primero un participante en la lista.");
+      return;
+    }
+
+    let texto = `==================================================\n`;
+    texto += `🏆   COMPROBANTE OFICIAL - MI QUINIELA 2026   🏆\n`;
+    texto += `==================================================\n\n`;
+    texto += `👤 PARTICIPANTE:      ${user.nombre.toUpperCase()}\n`;
+    texto += `🆔 CÓDIGO REGISTRO:   #Q-${user.id}\n`;
+    texto += `📅 EMISIÓN/SELLADO:   ${new Date().toLocaleString()}\n`;
+    texto += `🔒 ESTADO:            PRONÓSTICOS PÚBLICOS Y BLOQUEADOS\n`;
+    texto += `--------------------------------------------------\n\n`;
+    texto += `📋 DETALLE DE TUS MARCADORES GUARDADOS:\n`;
+    texto += `--------------------------------------------------\n`;
+
+    // Ordenamos y recorremos los partidos para el reporte
+    this.srv.partidos().forEach(partido => {
+      const miApuesta = this.obtenerGolesApostados(partido.id);
+      if (miApuesta) {
+        const gA = miApuesta.a;
+        const gB = miApuesta.b;
+        // Formateamos en una línea limpia para que sea fácil de leer en cualquier cel
+        texto += `Partido #${partido.id.toString().padEnd(3, ' ')} [Grupo ${partido.grupo}]: ${partido.equipo_a.padEnd(18, ' ')} ${gA} - ${gB}   ${partido.equipo_b}\n`;
+      }
+    });
+
+    texto += `\n==================================================\n`;
+    texto += `⚠️  Nota: Este archivo sirve como evidencia inmutable.\n`;
+    texto += `Cualquier intento de alteración física invalida el reclamo,\n`;
+    texto += `ya que los datos deben coincidir con la base de datos pública.\n`;
+    texto += `==================================================\n`;
+
+    // Generación y descarga del archivo en el dispositivo
+    const blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const linkDescarga = document.createElement('a');
+    linkDescarga.href = url;
+
+    // Limpiamos el nombre para el archivo (ej: Marco_Sanchez.txt)
+    const nombreArchivo = user.nombre.trim().replace(/\s+/g, '_');
+    linkDescarga.download = `Comprobante_Quiniela_${nombreArchivo}.txt`;
+
+    // Detonamos la descarga del navegador
+    linkDescarga.click();
+    window.URL.revokeObjectURL(url);
   }
 }

@@ -1,36 +1,40 @@
-<div style="background-image: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), url('https://ss365.liverpool.com.mx/xl/1190326329.jpg'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; padding: 20px 10px; font-family: system-ui, sans-serif; color: #f8fafc;">
+<div
+  style="background-image: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), url('https://ss365.liverpool.com.mx/xl/1190326329.jpg'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; padding: 20px 10px; font-family: system-ui, sans-serif; color: #f8fafc;">
 
   <div style="max-width: 900px; margin: 0 auto;">
 
     <!-- HEADER DE LA APP -->
     <header style="text-align: center; margin-bottom: 25px;">
-      <h1 style="color: #ffffff; font-size: 2.2rem; text-shadow: 0 4px 10px rgba(0,0,0,0.6); margin-bottom: 5px; font-weight: 800;">
+      <h1
+        style="color: #ffffff; font-size: 2.2rem; text-shadow: 0 4px 10px rgba(0,0,0,0.6); margin-bottom: 5px; font-weight: 800;">
         🏆 Mi Quiniela Mundialista 2026
       </h1>
-      <p style="color: #94a3b8; font-size: 14px; margin: 0;">Gestiona, consulta y edita tus marcadores en tiempo real</p>
+      <p style="color: #94a3b8; font-size: 14px; margin: 0;">Gestiona, consulta y edita tus marcadores en tiempo real
+      </p>
     </header>
 
     <!-- 🧭 BARRA DE NAVEGACIÓN COMPACTA (MENÚ) -->
-    <nav style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 25px; scrollbar-width: thin; -webkit-overflow-scrolling: touch;">
-      <button (click)="navegarA('inicio')" 
+    <nav
+      style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 25px; scrollbar-width: thin; -webkit-overflow-scrolling: touch;">
+      <button (click)="navegarA('inicio')"
         [style.background-color]="pantallaActual() === 'inicio' ? '#2563eb' : 'rgba(255,255,255,0.1)'"
         style="color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.2s;">
         🏠 Inicio
       </button>
 
-      <button (click)="navegarA('tabla')" 
+      <button (click)="navegarA('tabla')"
         [style.background-color]="pantallaActual() === 'tabla' ? '#2563eb' : 'rgba(255,255,255,0.1)'"
         style="color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.2s;">
         📊 Tabla de Posiciones
       </button>
 
-      <button (click)="navegarA('consulta')" 
+      <button (click)="navegarA('consulta')"
         [style.background-color]="pantallaActual() === 'consulta' ? '#2563eb' : 'rgba(255,255,255,0.1)'"
         style="color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.2s;">
         🔍 Ver Guardados vs Real
       </button>
 
-      <button (click)="navegarA('registrar')" 
+      <button (click)="navegarA('registrar')"
         [style.background-color]="pantallaActual() === 'registrar' ? '#10b981' : 'rgba(255,255,255,0.1)'"
         style="color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.2s;">
         {{ modoEdicion() ? '✏️ Modo Edición Activo' : '📝 Registra tus Pronósticos' }}
@@ -38,19 +42,19 @@
 
       <!-- Menús dinámicos exclusivos de Administrador -->
       @if (esAdministrador()) {
-        <button (click)="navegarA('pagos')" 
-          [style.background-color]="pantallaActual() === 'pagos' ? '#16a34a' : 'rgba(220,252,231,0.15)'"
-          [style.border]="'1px solid #22c55e'"
-          style="color: #4ade80; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.2s;">
-          🎟️ Validar Pagos
-        </button>
+      <button (click)="navegarA('pagos')"
+        [style.background-color]="pantallaActual() === 'pagos' ? '#16a34a' : 'rgba(220,252,231,0.15)'"
+        [style.border]="'1px solid #22c55e'"
+        style="color: #4ade80; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.2s;">
+        🎟️ Validar Pagos
+      </button>
 
-        <button (click)="navegarA('panel-oficial')" 
-          [style.background-color]="pantallaActual() === 'panel-oficial' ? '#ea580c' : 'rgba(254,215,170,0.15)'"
-          [style.border]="'1px solid #f97316'"
-          style="color: #fb923c; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.2s;">
-          ⚙️ Panel FIFA Oficial
-        </button>
+      <button (click)="navegarA('panel-oficial')"
+        [style.background-color]="pantallaActual() === 'panel-oficial' ? '#ea580c' : 'rgba(254,215,170,0.15)'"
+        [style.border]="'1px solid #f97316'"
+        style="color: #fb923c; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.2s;">
+        ⚙️ Panel FIFA Oficial
+      </button>
       }
     </nav>
 
@@ -58,296 +62,367 @@
     <!-- 🏠 PANTALLA: INICIO (DASHBOARD GENERAL)        -->
     <!-- ============================================== -->
     @if (pantallaActual() === 'inicio') {
-      <div style="animation: fadeIn 0.3s ease-in-out;">
-        <!-- Indicadores Superiores -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; text-align: center;">
-          <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-            <h4 style="margin: 0; color: #cbd5e1; font-weight: 500;">Participantes Activos</h4>
-            <h2 style="margin: 5px 0 0 0; color: #ffffff; font-size: 2rem; font-weight: bold;">{{ srv.tablaPosiciones().length }}</h2>
-          </div>
-          <div style="background-color: rgba(16, 185, 129, 0.15); backdrop-filter: blur(8px); padding: 20px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.25); box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-            <h4 style="margin: 0; color: #a7f3d0; font-weight: 500;">Bolsa Acumulada Real</h4>
-            <h2 style="margin: 5px 0 0 0; color: #34d399; font-size: 2rem; font-weight: 800;">${{ srv.bolsaTotal() }} MXN</h2>
-          </div>
+    <div style="animation: fadeIn 0.3s ease-in-out;">
+      <!-- Indicadores Superiores -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; text-align: center;">
+        <div
+          style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <h4 style="margin: 0; color: #cbd5e1; font-weight: 500;">Participantes Activos</h4>
+          <h2 style="margin: 5px 0 0 0; color: #ffffff; font-size: 2rem; font-weight: bold;">{{
+            srv.tablaPosiciones().length }}</h2>
         </div>
-
-        <!-- Reglas de la aplicación -->
-        <div style="background-color: rgba(30, 64, 175, 0.3); backdrop-filter: blur(8px); border-left: 5px solid #3b82f6; padding: 20px; border-radius: 0 12px 12px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
-          <h4 style="margin: 0; color: #93c5fd; font-size: 16px; font-weight: bold;">🔒 Registro Seguro y Reglas</h4>
-          <p style="margin: 8px 0 0 0; color: #e0f2fe; font-size: 13.5px; line-height: 1.6;">
-            1. Llena tus marcadores exactos en la pestaña correspondiente (Atinarle da <strong>3 pts</strong>, tendencia da <strong>1 pt</strong>).<br>
-            2. Al guardar, tu quiniela se enviará al sistema en estado pendiente.<br>
-            3. Aparecerás en la tabla de clasificación en cuanto el Administrador valide tu pago de inscripción.
-          </p>
-        </div>
-
-        <!-- Acceso rápido -->
-        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 30px;">
-          <button (click)="navegarA('tabla')" style="background-color: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">👀 Ver Clasificación</button>
-          <button (click)="navegarA('registrar')" style="background-color: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">✍️ Jugar / Editar</button>
+        <div
+          style="background-color: rgba(16, 185, 129, 0.15); backdrop-filter: blur(8px); padding: 20px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.25); box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <h4 style="margin: 0; color: #a7f3d0; font-weight: 500;">Bolsa Acumulada Real</h4>
+          <h2 style="margin: 5px 0 0 0; color: #34d399; font-size: 2rem; font-weight: 800;">${{ srv.bolsaTotal() }} MXN
+          </h2>
         </div>
       </div>
+
+      <!-- Reglas de la aplicación -->
+      <div
+        style="background-color: rgba(30, 64, 175, 0.3); backdrop-filter: blur(8px); border-left: 5px solid #3b82f6; padding: 20px; border-radius: 0 12px 12px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+        <h4 style="margin: 0; color: #93c5fd; font-size: 16px; font-weight: bold;">🔒 Registro Seguro y Reglas</h4>
+        <p style="margin: 8px 0 0 0; color: #e0f2fe; font-size: 13.5px; line-height: 1.6;">
+          1. Llena tus marcadores exactos en la pestaña correspondiente (Atinarle da <strong>3 pts</strong>, tendencia
+          da <strong>1 pt</strong>).<br>
+          2. Al guardar, tu quiniela se enviará al sistema en estado pendiente.<br>
+          3. Aparecerás en la tabla de clasificación en cuanto el Administrador valide tu pago de inscripción.
+        </p>
+      </div>
+
+      <!-- Acceso rápido -->
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 30px;">
+        <button (click)="navegarA('tabla')"
+          style="background-color: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">👀
+          Ver Clasificación</button>
+        <button (click)="navegarA('registrar')"
+          style="background-color: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">✍️
+          Jugar / Editar</button>
+      </div>
+    </div>
     }
 
     <!-- ============================================== -->
     <!-- 📊 PANTALLA: TABLA DE POSICIONES               -->
     <!-- ============================================== -->
     @if (pantallaActual() === 'tabla') {
-      <section style="background-color: rgba(255, 255, 255, 0.98); padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #0f172a; animation: fadeIn 0.2s ease-in-out;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; margin-bottom: 15px;">
-          <h3 style="color: #1e3a8a; margin: 0; font-weight: bold;">📊 Tabla de Posiciones Oficial</h3>
-          <button (click)="srv.cargarDatosDeLaNube()" style="background-color: #e2e8f0; color: #1e3a8a; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">
-            🔄 Actualizar
-          </button>
-        </div>
+    <section
+      style="background-color: rgba(255, 255, 255, 0.98); padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #0f172a; animation: fadeIn 0.2s ease-in-out;">
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; margin-bottom: 15px;">
+        <h3 style="color: #1e3a8a; margin: 0; font-weight: bold;">📊 Tabla de Posiciones Oficial</h3>
+        <button (click)="srv.cargarDatosDeLaNube()"
+          style="background-color: #e2e8f0; color: #1e3a8a; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">
+          🔄 Actualizar
+        </button>
+      </div>
 
-        <div style="overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse;">
-            <thead>
-              <tr style="background-color: #1e3a8a; color: white; text-align: left;">
-                <th style="padding: 12px 8px; border-radius: 6px 0 0 6px;">Posición</th>
-                <th style="padding: 12px 8px;">Nombre</th>
-                <th style="padding: 12px 8px; text-align: center; border-radius: 0 6px 6px 0;">Puntos</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (user of srv.tablaPosiciones(); track user.id; let idx = $index) {
-              <tr style="border-bottom: 1px solid #e5e7eb;" [style.background-color]="idx === 0 ? '#fef08a' : 'transparent'">
-                <td style="padding: 12px 8px; font-weight: bold;">#{{ idx + 1 }}</td>
-                <td style="padding: 12px 8px; font-weight: 500;">{{ user.nombre }}</td>
-                <td style="padding: 12px 8px; font-weight: bold; text-align: center; color: #1d4ed8;">{{ user.puntos }} pts</td>
-              </tr>
-              } @empty {
-              <tr>
-                <td colspan="3" style="padding: 30px; text-align: center; color: #64748b;">Ninguna quiniela activa todavía.</td>
-              </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background-color: #1e3a8a; color: white; text-align: left;">
+              <th style="padding: 12px 8px; border-radius: 6px 0 0 6px;">Posición</th>
+              <th style="padding: 12px 8px;">Nombre</th>
+              <th style="padding: 12px 8px; text-align: center; border-radius: 0 6px 6px 0;">Puntos</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of srv.tablaPosiciones(); track user.id; let idx = $index) {
+            <tr style="border-bottom: 1px solid #e5e7eb;"
+              [style.background-color]="idx === 0 ? '#fef08a' : 'transparent'">
+              <td style="padding: 12px 8px; font-weight: bold;">#{{ idx + 1 }}</td>
+              <td style="padding: 12px 8px; font-weight: 500;">{{ user.nombre }}</td>
+              <td style="padding: 12px 8px; font-weight: bold; text-align: center; color: #1d4ed8;">{{ user.puntos }}
+                pts</td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="3" style="padding: 30px; text-align: center; color: #64748b;">Ninguna quiniela activa
+                todavía.</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
     }
 
     <!-- ============================================== -->
     <!-- 🔍 PANTALLA: VER MARCADORES GUARDADOS VS REAL  -->
     <!-- ============================================== -->
     @if (pantallaActual() === 'consulta') {
-      <section style="background-color: rgba(255, 255, 255, 0.98); padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #0f172a; animation: fadeIn 0.2s ease-in-out;">
-        <h3 style="color: #1e293b; margin-top: 0; font-weight: bold;">🔍 Comparativa: Mis Marcadores vs Real FIFA</h3>
-        <p style="font-size: 13px; color: #475569; margin-bottom: 15px;">Selecciona tu nombre para auditar tus puntos acumulados:</p>
+    <section
+      style="background-color: rgba(255, 255, 255, 0.98); padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #0f172a; animation: fadeIn 0.2s ease-in-out;">
+      <h3 style="color: #1e293b; margin-top: 0; font-weight: bold;">🔍 Comparativa: Mis Marcadores vs Real FIFA</h3>
+      <p style="font-size: 13px; color: #475569; margin-bottom: 15px;">Selecciona tu nombre para auditar tus puntos
+        acumulados:</p>
 
-        <div style="margin-bottom: 20px;">
-          <select (change)="seleccionarUsuarioConsulta($event)" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 15px; font-weight: 500; color: #1e293b; background-color: white;">
-            <option value="">-- Elige un participante registrado --</option>
-            @for (p of srv.participantes(); track p.id) {
-              @if (p.aprobado) {
-                <option [value]="p.id">{{ p.nombre }}</option>
-              }
-            }
-          </select>
+      <div style="margin-bottom: 20px;">
+        <select (change)="seleccionarUsuarioConsulta($event)"
+          style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 15px; font-weight: 500; color: #1e293b; background-color: white;">
+          <option value="">-- Elige un participante registrado --</option>
+          @for (p of srv.participantes(); track p.id) {
+          @if (p.aprobado) {
+          <option [value]="p.id">{{ p.nombre }}</option>
+          }
+          }
+        </select>
+      </div>
+
+      @if (usuarioConsultado()) {
+      <div
+        style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <span style="color: #166534; font-weight: bold; font-size: 14px; display: block;">🔒 Pronósticos Sellarizados
+            e Inmutables</span>
+          <span style="color: #15803d; font-size: 12px;">Cualquier usuario puede ver este panel. Los marcadores están
+            blindados en el servidor.</span>
         </div>
 
-        @if (usuarioConsultado()) {
-          <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: thin;">
-            @for (g of listaGrupos; track g) {
-              <button type="button" (click)="cambiarGrupoConsulta(g)"
-                [style.background-color]="grupoConsulta() === g ? '#1e3a8a' : '#e2e8f0'"
-                [style.color]="grupoConsulta() === g ? 'white' : '#1e293b'"
-                style="border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; min-width: 45px;">
-                {{ g }}
-              </button>
-            }
-          </div>
+        <button (click)="descargarComprobante()"
+          style="background-color: #16a34a; color: white; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12.5px; display: flex; align-items: center; gap: 6px; box-shadow: 0 3px 8px rgba(22,163,74,0.25);">
+          📥 Descargar Evidencia (.txt)
+        </button>
+      </div>
 
-          <div style="display: flex; flex-direction: column; gap: 10px;">
-            @for (partido of srv.partidos(); track partido.id) {
-              @if (partido.grupo === grupoConsulta()) {
-                @let estilo = obtenerEstiloAcierto(partido.id);
-                @let miApuesta = obtenerGolesApostados(partido.id);
-
-                <div [style.background-color]="estilo.bg" [style.color]="estilo.texto" style="padding: 12px 15px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                  <div>
-                    <span style="font-size: 11px; opacity: 0.7; font-family: monospace; display: block;">PARTIDO #{{ partido.id }}</span>
-                    <span style="font-weight: bold; font-size: 14px;">{{ partido.equipo_a }} vs {{ partido.equipo_b }}</span>
-
-                    @if (partido.goles_a !== null && partido.goles_b !== null) {
-                      <span style="display: block; font-size: 12px; margin-top: 4px; font-weight: 600; opacity: 0.9;">
-                        Resultado FIFA: <span style="background-color: rgba(0,0,0,0.08); padding: 1px 6px; border-radius: 4px;">{{ partido.goles_a }} - {{ partido.goles_b }}</span>
-                      </span>
-                    } @else {
-                      <span style="display: block; font-size: 11px; margin-top: 4px; font-style: italic; opacity: 0.6;">Pendiente por jugar</span>
-                    }
-
-                    @if (estilo.label) {
-                      <span style="display: block; font-size: 11px; font-weight: bold; margin-top: 6px;">{{ estilo.label }}</span>
-                    }
-                  </div>
-
-                  <div style="text-align: center;">
-                    <span style="display: block; font-size: 11px; font-weight: bold; margin-bottom: 4px; opacity: 0.7;">Mi Pronóstico</span>
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                      <input type="number" [value]="miApuesta ? miApuesta.a : 0" disabled style="width: 45px; padding: 6px; text-align: center; border-radius: 6px; border: 1px solid rgba(0,0,0,0.15); font-weight: bold; background-color: rgba(255,255,255,0.6); color: inherit;">
-                      <span style="font-weight: bold; opacity: 0.5;">-</span>
-                      <input type="number" [value]="miApuesta ? miApuesta.b : 0" disabled style="width: 45px; padding: 6px; text-align: center; border-radius: 6px; border: 1px solid rgba(0,0,0,0.15); font-weight: bold; background-color: rgba(255,255,255,0.6); color: inherit;">
-                    </div>
-                  </div>
-                </div>
-              }
-            }
-          </div>
-        } @else {
-          <p style="text-align: center; color: #64748b; font-style: italic; padding: 20px;">Por favor, selecciona un usuario para desplegar la comparativa.</p>
+      <div
+        style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: thin;">
+        @for (g of listaGrupos; track g) {
+        <button type="button" (click)="cambiarGrupoConsulta(g)"
+          [style.background-color]="grupoConsulta() === g ? '#1e3a8a' : '#e2e8f0'"
+          [style.color]="grupoConsulta() === g ? 'white' : '#1e293b'"
+          style="border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; min-width: 45px;">
+          {{ g }}
+        </button>
         }
-      </section>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        @for (partido of srv.partidos(); track partido.id) {
+        @if (partido.grupo === grupoConsulta()) {
+        @let estilo = obtenerEstiloAcierto(partido.id);
+        @let miApuesta = obtenerGolesApostados(partido.id);
+
+        <div [style.background-color]="estilo.bg" [style.color]="estilo.texto"
+          style="padding: 12px 15px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <span style="font-size: 11px; opacity: 0.7; font-family: monospace; display: block;">PARTIDO #{{ partido.id
+              }}</span>
+            <span style="font-weight: bold; font-size: 14px;">{{ partido.equipo_a }} vs {{ partido.equipo_b }}</span>
+
+            @if (partido.goles_a !== null && partido.goles_b !== null) {
+            <span style="display: block; font-size: 12px; margin-top: 4px; font-weight: 600; opacity: 0.9;">
+              Resultado FIFA: <span style="background-color: rgba(0,0,0,0.08); padding: 1px 6px; border-radius: 4px;">{{
+                partido.goles_a }} - {{ partido.goles_b }}</span>
+            </span>
+            } @else {
+            <span style="display: block; font-size: 11px; margin-top: 4px; font-style: italic; opacity: 0.6;">Pendiente
+              por jugar</span>
+            }
+
+            @if (estilo.label) {
+            <span style="display: block; font-size: 11px; font-weight: bold; margin-top: 6px;">{{ estilo.label }}</span>
+            }
+          </div>
+
+          <div style="text-align: center;">
+            <span style="display: block; font-size: 11px; font-weight: bold; margin-bottom: 4px; opacity: 0.7;">Mi
+              Pronóstico</span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <input type="number" [value]="miApuesta ? miApuesta.a : 0" disabled
+                style="width: 45px; padding: 6px; text-align: center; border-radius: 6px; border: 1px solid rgba(0,0,0,0.15); font-weight: bold; background-color: rgba(255,255,255,0.6); color: inherit;">
+              <span style="font-weight: bold; opacity: 0.5;">-</span>
+              <input type="number" [value]="miApuesta ? miApuesta.b : 0" disabled
+                style="width: 45px; padding: 6px; text-align: center; border-radius: 6px; border: 1px solid rgba(0,0,0,0.15); font-weight: bold; background-color: rgba(255,255,255,0.6); color: inherit;">
+            </div>
+          </div>
+        </div>
+        }
+        }
+      </div>
+      } @else {
+      <p style="text-align: center; color: #64748b; font-style: italic; padding: 20px;">Por favor, selecciona un usuario
+        para desplegar la comparativa.</p>
+      }
+    </section>
     }
 
     <!-- ============================================== -->
     <!-- 📝 PANTALLA: REGISTRA / EDITA TUS PRONÓSTICOS  -->
     <!-- ============================================== -->
     @if (pantallaActual() === 'registrar') {
-      <section style="background-color: rgba(255, 255, 255, 0.98); padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #0f172a; animation: fadeIn 0.2s ease-in-out;">
-        <h3 style="color: #0f172a; margin-top: 0; font-weight: bold;">📝 Editor de Captura de Pronósticos</h3>
-        
-        <div style="background-color: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-          <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #1e293b;">Nombre del Participante:</label>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <input type="text" [(ngModel)]="nombreParticipante" [disabled]="modoEdicion()" placeholder="Tu nombre exacto para registrar o recuperar" style="flex: 1; min-width: 200px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background-color: white; color: black;">
-            
-            @if (!modoEdicion()) {
-              <button type="button" (click)="cargarQuinielaParaEditar(nombreParticipante)" style="padding: 12px 16px; background-color: #4f46e5; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;">
-                ✏️ Cargar Historial para Editar
-              </button>
-            }
+    <section
+      style="background-color: rgba(255, 255, 255, 0.98); padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #0f172a; animation: fadeIn 0.2s ease-in-out;">
+      <h3 style="color: #0f172a; margin-top: 0; font-weight: bold;">📝 Editor de Captura de Pronósticos</h3>
+
+      <div style="background-color: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #1e293b;">Nombre del
+          Participante:</label>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <input type="text" [(ngModel)]="nombreParticipante" [disabled]="modoEdicion()"
+            placeholder="Tu nombre exacto para registrar o recuperar"
+            style="flex: 1; min-width: 200px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background-color: white; color: black;">
+
+          @if (!modoEdicion()) {
+          <button type="button" (click)="cargarQuinielaParaEditar(nombreParticipante)"
+            style="padding: 12px 16px; background-color: #4f46e5; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;">
+            ✏️ Cargar Historial para Editar
+          </button>
+          }
+        </div>
+      </div>
+
+      <!-- Navegación de Grupos dentro de la Captura -->
+      <div
+        style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 20px; scrollbar-width: thin;">
+        @for (g of listaGrupos; track g) {
+        <button type="button" (click)="cambiarGrupo(g)"
+          [style.background-color]="grupoSeleccionado() === g ? '#1e3a8a' : '#e2e8f0'"
+          [style.color]="grupoSeleccionado() === g ? 'white' : '#1e293b'"
+          style="border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; min-width: 45px;">
+          {{ g }}
+        </button>
+        }
+      </div>
+
+      <!-- Listado de Partidos por Grupo -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        @for (partido of srv.partidos(); track partido.id) {
+        @if (partido.grupo === grupoSeleccionado()) {
+        <div
+          style="background-color: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <span>
+            <span style="color: #94a3b8; font-size: 11px; margin-right: 8px; font-family: monospace;">#{{ partido.id
+              }}</span>
+            <strong style="color: #1e293b;">{{ partido.equipo_a }}</strong> <span style="color: #64748b;">vs</span>
+            <strong style="color: #1e293b;">{{ partido.equipo_b }}</strong>
+          </span>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <input type="number" min="0" placeholder="0" [(ngModel)]="apuestasForm()[partido.id + '_a']"
+              [disabled]="modoEdicion() && partido.goles_a !== null && partido.goles_a !== undefined && !esAdministrador()"
+              [style.opacity]="modoEdicion() && partido.goles_a !== null && partido.goles_a !== undefined && !esAdministrador() ? '0.5' : '1'"
+              style="width: 50px; padding: 8px; text-align: center; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; background-color: white; color: #0f172a;">
+
+            <span style="color: #cbd5e1; font-weight: bold;">-</span>
+
+            <input type="number" min="0" placeholder="0" [(ngModel)]="apuestasForm()[partido.id + '_b']"
+              [disabled]="modoEdicion() && partido.goles_b !== null && partido.goles_b !== undefined && !esAdministrador()"
+              [style.opacity]="modoEdicion() && partido.goles_b !== null && partido.goles_b !== undefined && !esAdministrador() ? '0.5' : '1'"
+              style="width: 50px; padding: 8px; text-align: center; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; background-color: white; color: #0f172a;">
           </div>
         </div>
+        }
+        }
+      </div>
 
-        <!-- Navegación de Grupos dentro de la Captura -->
-        <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 20px; scrollbar-width: thin;">
-          @for (g of listaGrupos; track g) {
-            <button type="button" (click)="cambiarGrupo(g)"
-              [style.background-color]="grupoSeleccionado() === g ? '#1e3a8a' : '#e2e8f0'"
-              [style.color]="grupoSeleccionado() === g ? 'white' : '#1e293b'"
-              style="border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; min-width: 45px;">
-              {{ g }}
-            </button>
-          }
-        </div>
-
-        <!-- Listado de Partidos por Grupo -->
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          @for (partido of srv.partidos(); track partido.id) {
-            @if (partido.grupo === grupoSeleccionado()) {
-              <div style="background-color: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                <span>
-                  <span style="color: #94a3b8; font-size: 11px; margin-right: 8px; font-family: monospace;">#{{ partido.id }}</span>
-                  <strong style="color: #1e293b;">{{ partido.equipo_a }}</strong> <span style="color: #64748b;">vs</span> <strong style="color: #1e293b;">{{ partido.equipo_b }}</strong>
-                </span>
-                
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <input type="number" min="0" placeholder="0" [(ngModel)]="apuestasForm()[partido.id + '_a']"
-                    [disabled]="modoEdicion() && partido.goles_a !== null && partido.goles_a !== undefined && !esAdministrador()"
-                    [style.opacity]="modoEdicion() && partido.goles_a !== null && partido.goles_a !== undefined && !esAdministrador() ? '0.5' : '1'"
-                    style="width: 50px; padding: 8px; text-align: center; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; background-color: white; color: #0f172a;">
-
-                  <span style="color: #cbd5e1; font-weight: bold;">-</span>
-
-                  <input type="number" min="0" placeholder="0" [(ngModel)]="apuestasForm()[partido.id + '_b']"
-                    [disabled]="modoEdicion() && partido.goles_b !== null && partido.goles_b !== undefined && !esAdministrador()"
-                    [style.opacity]="modoEdicion() && partido.goles_b !== null && partido.goles_b !== undefined && !esAdministrador() ? '0.5' : '1'"
-                    style="width: 50px; padding: 8px; text-align: center; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; background-color: white; color: #0f172a;">
-                </div>
-              </div>
-            }
-          }
-        </div>
-
-        <!-- Botón de acción contextual -->
-        <div style="margin-top: 25px;">
-          @if (!modoEdicion()) {
-            <button (click)="enviarQuiniela()" style="width: 100%; padding: 16px; background-color: #10b981; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">
-              💾 Guardar y Enviar Petición ($100)
-            </button>
-          } @else {
-            <button (click)="guardarEdicion()" style="width: 100%; padding: 16px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 12px rgba(59,130,246,0.3);">
-              {{ esAdministrador() ? '🔄 Guardar Edición como Administrador (Ilimitado)' : '🔄 Actualizar mis Pronósticos (Única Oportunidad)' }}
-            </button>
-          }
-        </div>
-      </section>
+      <!-- Botón de acción contextual -->
+      <div style="margin-top: 25px;">
+        @if (!modoEdicion()) {
+        <button (click)="enviarQuiniela()"
+          style="width: 100%; padding: 16px; background-color: #10b981; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">
+          💾 Guardar y Enviar Petición ($100)
+        </button>
+        } @else {
+        <button (click)="guardarEdicion()"
+          style="width: 100%; padding: 16px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 12px rgba(59,130,246,0.3);">
+          {{ esAdministrador() ? '🔄 Guardar Edición como Administrador (Ilimitado)' : '🔄 Actualizar mis Pronósticos
+          (Única Oportunidad)' }}
+        </button>
+        }
+      </div>
+    </section>
     }
 
     <!-- ============================================== -->
     <!-- 🎟️ PANTALLA ADMIN: VALIDAR PAGOS PENDIENTES    -->
     <!-- ============================================== -->
     @if (pantallaActual() === 'pagos' && esAdministrador()) {
-      <section style="background-color: rgba(240, 253, 244, 0.98); padding: 25px; border-radius: 16px; border: 1px solid #bbf7d0; color: #14532d; animation: fadeIn 0.2s ease-in-out;">
-        <h3 style="color: #166534; margin-top: 0; font-weight: bold;">🎟️ Validar Pagos Pendientes</h3>
-        <p style="font-size: 13px; color: #166534; margin-bottom: 15px;">Aprueba las solicitudes para añadirlos formalmente a la bolsa:</p>
+    <section
+      style="background-color: rgba(240, 253, 244, 0.98); padding: 25px; border-radius: 16px; border: 1px solid #bbf7d0; color: #14532d; animation: fadeIn 0.2s ease-in-out;">
+      <h3 style="color: #166534; margin-top: 0; font-weight: bold;">🎟️ Validar Pagos Pendientes</h3>
+      <p style="font-size: 13px; color: #166534; margin-bottom: 15px;">Aprueba las solicitudes para añadirlos
+        formalmente a la bolsa:</p>
 
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          @for (p of srv.participantes(); track p.id) {
-            @if (!p.aprobado) {
-              <div style="display: flex; justify-content: space-between; align-items: center; background-color: white; padding: 12px; border-radius: 8px; border: 1px solid #bbf7d0; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
-                <span style="font-weight: bold; color: #14532d;">👤 {{ p.nombre }}</span>
-                <button (click)="aprobarPago(p.id)" style="background-color: #16a34a; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px;">
-                  ✅ Aprobar Pago ($100)
-                </button>
-              </div>
-            }
-          } @empty {
-            <p style="font-size: 13px; color: #166534; font-style: italic; margin: 0; text-align: center; padding: 15px;">No hay pagos pendientes por auditar. ¡Todo al corriente!</p>
-          }
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        @for (p of srv.participantes(); track p.id) {
+        @if (!p.aprobado) {
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; background-color: white; padding: 12px; border-radius: 8px; border: 1px solid #bbf7d0; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+          <span style="font-weight: bold; color: #14532d;">👤 {{ p.nombre }}</span>
+          <button (click)="aprobarPago(p.id)"
+            style="background-color: #16a34a; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px;">
+            ✅ Aprobar Pago ($100)
+          </button>
         </div>
-      </section>
+        }
+        } @empty {
+        <p style="font-size: 13px; color: #166534; font-style: italic; margin: 0; text-align: center; padding: 15px;">No
+          hay pagos pendientes por auditar. ¡Todo al corriente!</p>
+        }
+      </div>
+    </section>
     }
 
     <!-- ============================================== -->
     <!-- ⚙️ PANTALLA ADMIN: PANEL MARCADORES OFICIALES -->
     <!-- ============================================== -->
     @if (pantallaActual() === 'panel-oficial' && esAdministrador()) {
-      <section style="background-color: rgba(255, 247, 237, 0.98); padding: 25px; border-radius: 16px; border: 1px solid #ffedd5; color: #7c2d12; animation: fadeIn 0.2s ease-in-out;">
-        <h3 style="color: #c2410c; margin-top: 0; font-weight: bold;">⚙️ Panel Marcadores Oficiales FIFA</h3>
-        <p style="font-size: 13px; color: #7c2d12; margin-bottom: 15px;">Digita los resultados finales para detonar el recalculo de la tabla en la nube:</p>
+    <section
+      style="background-color: rgba(255, 247, 237, 0.98); padding: 25px; border-radius: 16px; border: 1px solid #ffedd5; color: #7c2d12; animation: fadeIn 0.2s ease-in-out;">
+      <h3 style="color: #c2410c; margin-top: 0; font-weight: bold;">⚙️ Panel Marcadores Oficiales FIFA</h3>
+      <p style="font-size: 13px; color: #7c2d12; margin-bottom: 15px;">Digita los resultados finales para detonar el
+        recalculo de la tabla en la nube:</p>
 
-        <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 20px; scrollbar-width: thin;">
-          @for (g of listaGrupos; track g) {
-            <button type="button" (click)="cambiarGrupo(g)"
-              [style.background-color]="grupoSeleccionado() === g ? '#c2410c' : '#ffedd5'"
-              [style.color]="grupoSeleccionado() === g ? 'white' : '#7c2d12'"
-              style="border: 1px solid #fed7aa; padding: 10px 16px; border-radius: 8px; min-width: 45px; font-weight: bold; cursor: pointer;">
-              {{ g }}
-            </button>
-          }
-        </div>
+      <div
+        style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 20px; scrollbar-width: thin;">
+        @for (g of listaGrupos; track g) {
+        <button type="button" (click)="cambiarGrupo(g)"
+          [style.background-color]="grupoSeleccionado() === g ? '#c2410c' : '#ffedd5'"
+          [style.color]="grupoSeleccionado() === g ? 'white' : '#7c2d12'"
+          style="border: 1px solid #fed7aa; padding: 10px 16px; border-radius: 8px; min-width: 45px; font-weight: bold; cursor: pointer;">
+          {{ g }}
+        </button>
+        }
+      </div>
 
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          @for (partido of srv.partidos(); track partido.id) {
-            @if (partido.grupo === grupoSeleccionado()) {
-              <div style="display: flex; justify-content: space-between; align-items: center; background-color: white; padding: 12px; border-radius: 8px; border: 1px solid #fed7aa; flex-wrap: wrap; gap: 10px;">
-                <div>
-                  <span style="font-size: 13px; color: #475569;"><strong style="color: #111827;">#{{ partido.id }}</strong> - {{ partido.equipo_a }} vs {{ partido.equipo_b }}</span>
-                  <br>
-                  @if (partido.goles_a !== null && partido.goles_b !== null) {
-                    <span style="background-color: #fef08a; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; color: #854d0e;">Oficial: {{ partido.goles_a }} - {{ partido.goles_b }}</span>
-                  }
-                </div>
-                <div style="display: flex; gap: 6px; align-items: center;">
-                  <input type="number" #gA placeholder="0" [value]="partido.goles_a" style="width: 38px; padding: 6px; text-align: center; border-radius: 6px; border: 1px solid #cbd5e1; background-color: white; color: black; font-weight: bold;">
-                  <span style="color: #cbd5e1; font-weight: bold;">v</span>
-                  <input type="number" #gB placeholder="0" [value]="partido.goles_b" style="width: 38px; padding: 6px; text-align: center; border-radius: 6px; border: 1px solid #cbd5e1; background-color: white; color: black; font-weight: bold;">
-                  <button (click)="guardarResultadoOficial(partido.id, gA.value, gB.value)" style="padding: 6px 12px; font-size: 12px; cursor: pointer; border-radius: 6px; background-color: #c2410c; color: white; border: none; font-weight: bold;">💾</button>
-                </div>
-              </div>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        @for (partido of srv.partidos(); track partido.id) {
+        @if (partido.grupo === grupoSeleccionado()) {
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; background-color: white; padding: 12px; border-radius: 8px; border: 1px solid #fed7aa; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <span style="font-size: 13px; color: #475569;"><strong style="color: #111827;">#{{ partido.id }}</strong> -
+              {{ partido.equipo_a }} vs {{ partido.equipo_b }}</span>
+            <br>
+            @if (partido.goles_a !== null && partido.goles_b !== null) {
+            <span
+              style="background-color: #fef08a; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; color: #854d0e;">Oficial:
+              {{ partido.goles_a }} - {{ partido.goles_b }}</span>
             }
-          }
+          </div>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <input type="number" #gA placeholder="0" [value]="partido.goles_a"
+              style="width: 38px; padding: 6px; text-align: center; border-radius: 6px; border: 1px solid #cbd5e1; background-color: white; color: black; font-weight: bold;">
+            <span style="color: #cbd5e1; font-weight: bold;">v</span>
+            <input type="number" #gB placeholder="0" [value]="partido.goles_b"
+              style="width: 38px; padding: 6px; text-align: center; border-radius: 6px; border: 1px solid #cbd5e1; background-color: white; color: black; font-weight: bold;">
+            <button (click)="guardarResultadoOficial(partido.id, gA.value, gB.value)"
+              style="padding: 6px 12px; font-size: 12px; cursor: pointer; border-radius: 6px; background-color: #c2410c; color: white; border: none; font-weight: bold;">💾</button>
+          </div>
         </div>
+        }
+        }
+      </div>
 
-        <div style="text-align: center; margin-top: 30px;">
-          <button type="button" (click)="autoRellenarCeros()" style="background-color: rgba(0,0,0,0.05); color: #7c2d12; border: 1px dashed #c2410c; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold;">
-            ⚙️ Modo Prueba: Rellenar Grupo con 0-0
-          </button>
-        </div>
-      </section>
+      <div style="text-align: center; margin-top: 30px;">
+        <button type="button" (click)="autoRellenarCeros()"
+          style="background-color: rgba(0,0,0,0.05); color: #7c2d12; border: 1px dashed #c2410c; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold;">
+          ⚙️ Modo Prueba: Rellenar Grupo con 0-0
+        </button>
+      </div>
+    </section>
     }
 
   </div>
@@ -356,7 +431,14 @@
 <!-- 🎨 Pequeño estilo CSS embebido para suavizar las transiciones de pantalla -->
 <style>
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>
