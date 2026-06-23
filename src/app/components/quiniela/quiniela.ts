@@ -28,6 +28,9 @@ export class QuinielaComponent implements OnInit {
   public modoEdicion = signal<boolean>(false);
   public idParticipanteAEditar = signal<number | null>(null);
 
+  // Estado para el análisis por partido individual
+  public partidoSeleccionadoId = signal<number | null>(null);
+
   constructor(public srv: QuinielaService, private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -326,5 +329,52 @@ export class QuinielaComponent implements OnInit {
     // Detonamos la descarga del navegador
     linkDescarga.click();
     window.URL.revokeObjectURL(url);
+  }
+
+  public obtenerPronosticosAgrupadosPorPartido(): any[] {
+    const partidoId = this.partidoSeleccionadoId();
+    if (!partidoId) return [];
+
+    const partido = this.srv.partidos().find(p => p.id === partidoId);
+    if (!partido) return [];
+
+    // 1. Extraemos los pronósticos de todos los participantes aprobados
+    const listaReporte = this.srv.participantes()
+      .filter(p => p.aprobado)
+      .map(p => {
+        const apuesta = p.pronosticos?.find((pr: any) => {
+          const prId = pr.partido_id !== undefined ? pr.partido_id : pr.partidoId;
+          return Number(prId) === partidoId;
+        });
+
+        const golesA = apuesta ? (apuesta as any).goles_a_pronostico !== undefined ? (apuesta as any).goles_a_pronostico : (apuesta as any).golesAPronostico : null;
+        const golesB = apuesta ? (apuesta as any).goles_b_pronostico !== undefined ? (apuesta as any).goles_b_pronostico : (apuesta as any).golesBPronostico : null;
+
+        // Calculamos tendencia del pronóstico para ordenamiento secundario (A = Gana A, B = Gana B, E = Empate)
+        let tendencia = 'N/A';
+        if (golesA !== null && golesB !== null) {
+          tendencia = Number(golesA) > Number(golesB) ? 'A' : (Number(golesA) < Number(golesB) ? 'B' : 'E');
+        }
+
+        return {
+          nombre: p.nombre,
+          marcadorStr: golesA !== null && golesB !== null ? `${golesA} - ${golesB}` : 'Sin registrar',
+          golesA: golesA !== null ? Number(golesA) : -1,
+          golesB: golesB !== null ? Number(golesB) : -1,
+          tendencia: tendencia
+        };
+      });
+
+    // 2. 🧠 Algoritmo de ordenamiento: Agrupa por marcador exacto idéntico, y si son diferentes, por tendencia
+    return listaReporte.sort((x, y) => {
+      // Si tienen el mismo marcador exacto string (ej: "2 - 1" y "2 - 1"), van juntos
+      if (x.marcadorStr === y.marcadorStr) return x.nombre.localeCompare(y.nombre);
+
+      // Si no, agrupamos por la tendencia general del partido
+      if (x.tendencia !== y.tendencia) return x.tendencia.localeCompare(y.tendencia);
+
+      // Si tienen la misma tendencia pero marcadores distintos (ej: "2-1" y "3-2"), ordena por goles del local
+      return y.golesA - x.golesA;
+    });
   }
 }

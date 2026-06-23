@@ -28,6 +28,12 @@
         📊 Tabla de Posiciones
       </button>
 
+      <button (click)="navegarA('analisis-partido')"
+        [style.background-color]="pantallaActual() === 'analisis-partido' ? '#2563eb' : 'rgba(255,255,255,0.1)'"
+        style="color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.2s;">
+        📊 Análisis por Partido
+      </button>
+
       <button (click)="navegarA('consulta')"
         [style.background-color]="pantallaActual() === 'consulta' ? '#2563eb' : 'rgba(255,255,255,0.1)'"
         style="color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.2s;">
@@ -145,6 +151,136 @@
           </tbody>
         </table>
       </div>
+    </section>
+    }
+
+    <!-- ============================================== -->
+    <!-- 📊 PANTALLA: ANÁLISIS DE PRONÓSTICOS POR PARTIDO-->
+    <!-- ============================================== -->
+    @if (pantallaActual() === 'analisis-partido') {
+    <section
+      style="background-color: rgba(255, 255, 255, 0.98); padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #0f172a; animation: fadeIn 0.2s ease-in-out;">
+      <h3 style="color: #1e3a8a; margin-top: 0; font-weight: bold; display: flex; align-items: center; gap: 8px;">📊
+        Concentrado Global por Partido</h3>
+      <p style="font-size: 13px; color: #475569; margin-bottom: 20px;">Selecciona cualquier partido del torneo para
+        auditar qué puso cada participante. La tabla agrupa de forma consecutiva a los usuarios con <strong>marcadores
+          idénticos o tendencias similares</strong>.</p>
+
+      <!-- Selector de Partido -->
+      <div style="margin-bottom: 25px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #1e293b; font-size: 14px;">Elige el
+          Partido a Consultar:</label>
+        <select (change)="partidoSeleccionadoId.set(+$any($event.target).value)"
+          style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 15px; font-weight: 500; color: #1e293b; background-color: white;">
+          <option value="">-- Selecciona un partido de la lista --</option>
+          @for (partido of srv.partidos(); track partido.id) {
+          <option [value]="partido.id">
+            Partido #${{ partido.id }} [Grupo {{ partido.grupo }}]: {{ partido.equipo_a }} vs {{ partido.equipo_b }}
+            {{ partido.goles_a !== null ? '(Oficial: ' + partido.goles_a + '-' + partido.goles_b + ')' : '' }}
+          </option>
+          }
+        </select>
+      </div>
+
+      <!-- Resultados e informe de Coincidencias -->
+      @if (partidoSeleccionadoId()) {
+      @let reporte = obtenerPronosticosAgrupadosPorPartido();
+      @let partidoInfo = srv.partidos().find(p => p.id === partidoSeleccionadoId());
+
+      <!-- Encabezado del Partido Seleccionado -->
+      <div
+        style="background-color: #f1f5f9; padding: 15px; border-radius: 10px; border-left: 5px solid #1e3a8a; margin-bottom: 20px; text-align: center;">
+        <span
+          style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: bold; letter-spacing: 1px;">Enfoque
+          del Encuentro</span>
+        <h4 style="margin: 5px 0; color: #1e293b; font-size: 1.2rem; font-weight: bold;">
+          {{ partidoInfo?.equipo_a }} vs {{ partidoInfo?.equipo_b }}
+        </h4>
+        @if (partidoInfo?.goles_a !== null && partidoInfo?.goles_b !== null) {
+        <span
+          style="background-color: #1e3a8a; color: white; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; margin-top: 5px;">
+          Resultado Oficial FIFA: {{ partidoInfo?.goles_a }} - {{ partidoInfo?.goles_b }}
+        </span>
+        } @else {
+        <span style="color: #64748b; font-size: 12px; font-style: italic;">⚽ Este encuentro aún no se ha jugado</span>
+        }
+      </div>
+
+      <!-- Tabla Comparativa Agrupada -->
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <thead>
+            <tr style="background-color: #334155; color: white; text-align: left; font-size: 13px;">
+              <th style="padding: 12px 10px; border-radius: 6px 0 0 6px;">Participante</th>
+              <th style="padding: 12px 10px; text-align: center;">Marcador Pronosticado</th>
+              <th style="padding: 12px 10px; text-align: center; border-radius: 0 6px 6px 0;">Análisis de Tendencia</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of reporte; track item.nombre; let idx = $index) {
+            <!-- Marcamos un fondo sutil si coincide exactamente con el marcador oficial (en caso de que ya se haya jugado) -->
+            @let esExactoOficial = partidoInfo?.goles_a !== null && partidoInfo?.goles_a === item.golesA &&
+            partidoInfo?.goles_b === item.golesB;
+
+            <tr style="border-bottom: 1px solid #e2e8f0; font-size: 14px;"
+              [style.background-color]="esExactoOficial ? '#dcfce7' : (idx % 2 === 0 ? '#f8fafc' : '#ffffff')">
+
+              <!-- Nombre del Participante -->
+              <td style="padding: 12px 10px; font-weight: 600; color: #1e293b;">
+                👤 {{ item.nombre }}
+                @if (esExactoOficial) {
+                <span style="color: #16a34a; font-size: 11px; font-weight: bold; margin-left: 6px;">🎯 Atinó
+                  exacto</span>
+                }
+              </td>
+
+              <!-- Goles Pronosticados -->
+              <td
+                style="padding: 12px 10px; text-align: center; font-weight: bold; font-size: 15px; color: #0f172a; font-family: monospace;">
+                <span
+                  style="background-color: #e2e8f0; padding: 4px 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                  {{ item.marcadorStr }}
+                </span>
+              </td>
+
+              <!-- Tag de Tendencia para identificar similitudes visuales rápidamente -->
+              <td style="padding: 12px 10px; text-align: center;">
+                @if (item.tendencia === 'A') {
+                <span
+                  style="background-color: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">
+                  Gana {{ partidoInfo?.equipo_a }}
+                </span>
+                } @else if (item.tendencia === 'B') {
+                <span
+                  style="background-color: #ffedd5; color: #c2410c; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">
+                  Gana {{ partidoInfo?.equipo_b }}
+                </span>
+                } @else if (item.tendencia === 'E') {
+                <span
+                  style="background-color: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">
+                  Empate 🤝
+                </span>
+                } @else {
+                <span style="color: #94a3b8; font-size: 11px; font-style: italic;">Sin datos</span>
+                }
+              </td>
+
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Footer Informativo de la Tabla -->
+      <p style="font-size: 11px; color: #64748b; margin-top: 15px; font-style: italic; text-align: right;">
+        * Nota: Si dos o más celdas consecutivas tienen el mismo marcador, significa que esos participantes clonaron
+        exactamente su pronóstico para este juego.
+      </p>
+
+      } @else {
+      <p style="text-align: center; color: #64748b; font-style: italic; padding: 30px;">Por favor, selecciona un partido
+        de la lista para desglosar el mapa de pronósticos colectivos.</p>
+      }
     </section>
     }
 
